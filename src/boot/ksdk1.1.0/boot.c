@@ -84,7 +84,7 @@
 // #include "devBME680.h"
 // #include "devBMX055.h"
 // #include "devCCS811.h"
-#include "devHDC1000.h"
+// #include "devHDC1000.h"
 #include "devRV8803C7.h"
 
 
