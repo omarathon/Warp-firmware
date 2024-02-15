@@ -92,6 +92,7 @@ ADD_EXECUTABLE(Warp
     "${ProjDirPath}/../../src/boot.c"
     "${ProjDirPath}/../../src/errstrsEN.c"
     "${ProjDirPath}/../../src/powermodes.c"
+    "${ProjDirPath}/../../src/devSSD1331.c" # Added by O. Tanner
     "${ProjDirPath}/../../src/devMMA8451Q.c"
     "${ProjDirPath}/../../src/SEGGER_RTT.c"
     "${ProjDirPath}/../../src/SEGGER_RTT_printf.c"

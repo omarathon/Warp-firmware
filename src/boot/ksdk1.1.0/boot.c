@@ -78,6 +78,7 @@
 */
 
 #include "devMMA8451Q.h"
+#include "devSSD1331.h" // Added by O. Tanner
 
 #if (!WARP_BUILD_ENABLE_FRDMKL03)
 	#include "devADXL362.h"
