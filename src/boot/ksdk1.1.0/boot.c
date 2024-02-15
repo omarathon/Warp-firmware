@@ -77,7 +77,7 @@
 * Include all sensors because they will be needed to decode flash.
 */
 // #include "devADXL362.h"
-#include "devAMG8834.h"
+// #include "devAMG8834.h"
 #include "devMMA8451Q.h"
 #include "devMAG3110.h"
 #include "devL3GD20H.h"
