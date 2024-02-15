@@ -34,6 +34,9 @@
 	kSSD1331PinCSn		= GPIO_MAKE_PIN(HW_GPIOB, 13),
 	kSSD1331PinDC		= GPIO_MAKE_PIN(HW_GPIOA, 12),
 	kSSD1331PinRST		= GPIO_MAKE_PIN(HW_GPIOB, 0),
+	kWarpPinLED_RED     = GPIO_MAKE_PIN(HW_GPIOB, 10),
+	kWarpPinLED_GREEN	= GPIO_MAKE_PIN(HW_GPIOB, 11),
+
 };
 
 gpio_output_pin_user_config_t	outputPins[] = {
