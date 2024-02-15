@@ -80,6 +80,14 @@
 #include "devMMA8451Q.h"
 #include "devSSD1331.h" // Added by O. Tanner
 
+// Added by O.Tanner
+
+#define HW_GPIOA (0U) /*!< Instance number for GPIOA. */
+#define HW_GPIOB (1U) /*!< Instance number for GPIOB. */
+
+#define PORTA_BASE (0x40049000u)
+#define PORTB_BASE (0x4004A000u)
+
 #if (!WARP_BUILD_ENABLE_FRDMKL03)
 	#include "devADXL362.h"
 	#include "devAMG8834.h"
@@ -1919,10 +1927,17 @@ main(void)
 	int timer  = 0;
 	int rttKey = -1;
 
-	bool _originalWarpExtraQuietMode = gWarpExtraQuietMode;
-	gWarpExtraQuietMode = false;
-	warpPrint("Press any key to show menu...\n");
-	gWarpExtraQuietMode = _originalWarpExtraQuietMode;
+    bool _originalWarpExtraQuietMode = gWarpExtraQuietMode;
+    gWarpExtraQuietMode = false;
+
+    // Run Display initialisation code - O. Tanner
+
+    warpPrint("\n\rRUNNING INIT CODE HERE\n");
+    devSSD1331init();
+    warpPrint("\rDONE RUNNING INIT CODE HERE\n");
+
+    warpPrint("Press any key to show menu...\n");
+    gWarpExtraQuietMode = _originalWarpExtraQuietMode;
 
 	while (rttKey < 0 && timer < kWarpCsvstreamMenuWaitTimeMilliSeconds)
 	{
