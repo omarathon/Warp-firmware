@@ -1233,7 +1233,7 @@ printBootSplash(uint16_t gWarpCurrentSupplyVoltage, uint8_t menuRegisterAddress,
 	 *	buffers without overrunning them when at max CPU speed.
 	 */
 	warpPrint("\r\n\n\n\n[ *\t\t\t\tWarp (HW revision C) / Glaux (HW revision B)\t\t\t* ]\n");
-	warpPrint("\r[  \t\t\t\t      Cambridge / Physcomplab / OMAR1   \t\t\t\t  ]\n\n");
+	warpPrint("\r[  \t\t\t\t      Cambridge / Physcomplab / OMAR2   \t\t\t\t  ]\n\n");
 	warpPrint("\r\tSupply=%dmV,\tDefault Target Read Register=0x%02x\n",
 			  gWarpCurrentSupplyVoltage, menuRegisterAddress);
 	warpPrint("\r\tI2C=%dkb/s,\tSPI=%dkb/s,\tUART=%db/s,\tI2C Pull-Up=%d\n\n",
