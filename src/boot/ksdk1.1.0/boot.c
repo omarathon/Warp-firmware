@@ -2549,17 +2549,17 @@ main(void)
 				warpPrint("\r\n\tRepeating dev%d @ 0x%02x, reps=%d, pull=%d, delay=%dms:\n\n",
 					menuTargetSensor, menuRegisterAddress, repetitionsPerAddress, spinDelay);
 
-				// repeatRegisterReadForDeviceAndAddress(	menuTargetSensor /*warpSensorDevice*/,
-				// 					menuRegisterAddress /*baseAddress */,
-				// 					autoIncrement /*autoIncrement*/,
-				// 					chunkReadsPerAddress,
-				// 					chatty,
-				// 					spinDelay,
-				// 					repetitionsPerAddress,
-				// 					gWarpCurrentSupplyVoltage,
-				// 					adaptiveSssupplyMaxMillivolts,
-				// 					referenceByte
-				// 				);
+				repeatRegisterReadForDeviceAndAddress(	menuTargetSensor /*warpSensorDevice*/,
+									menuRegisterAddress /*baseAddress */,
+									autoIncrement /*autoIncrement*/,
+									chunkReadsPerAddress,
+									chatty,
+									spinDelay,
+									repetitionsPerAddress,
+									gWarpCurrentSupplyVoltage,
+									adaptiveSssupplyMaxMillivolts,
+									referenceByte
+								);
 
 				break;
 			}
@@ -4330,6 +4330,54 @@ loopForSensor(	const char *  tagString,
 // 		warpDisableI2Cpins();
 // 	}
 // }
+
+void
+repeatRegisterReadForDeviceAndAddress(WarpSensorDevice warpSensorDevice, uint8_t baseAddress, bool autoIncrement, int chunkReadsPerAddress, bool chatty, int spinDelay, int repetitionsPerAddress, uint16_t sssupplyMillivolts, uint16_t adaptiveSssupplyMaxMillivolts, uint8_t referenceByte)
+{
+	switch (warpSensorDevice)
+	{
+
+		case kWarpSensorMMA8451Q:
+		{
+/*
+ *	MMA8451Q: VDD 1.95--3.6
+ */
+#if (WARP_BUILD_ENABLE_DEVMMA8451Q)
+				loopForSensor(	"\r\nMMA8451Q:\n\r",		/*	tagString			*/
+						&readSensorRegisterMMA8451Q,	/*	readSensorRegisterFunction	*/
+						&deviceMMA8451QState,		/*	i2cDeviceState			*/
+						NULL,				/*	spiDeviceState			*/
+						baseAddress,			/*	baseAddress			*/
+						0x00,				/*	minAddress			*/
+						0x31,				/*	maxAddress			*/
+						repetitionsPerAddress,		/*	repetitionsPerAddress		*/
+						chunkReadsPerAddress,		/*	chunkReadsPerAddress		*/
+						spinDelay,			/*	spinDelay			*/
+						autoIncrement,			/*	autoIncrement			*/
+						sssupplyMillivolts,		/*	sssupplyMillivolts		*/
+						referenceByte,			/*	referenceByte			*/
+						adaptiveSssupplyMaxMillivolts,	/*	adaptiveSssupplyMaxMillivolts	*/
+						chatty				/*	chatty				*/
+			);
+#else
+			warpPrint("\r\n\tMMA8451Q Read Aborted. Device Disabled :(");
+#endif
+
+			break;
+		}
+
+		default:
+		{
+			warpPrint("\r\tInvalid warpSensorDevice [%d] passed to repeatRegisterReadForDeviceAndAddress.\n", warpSensorDevice);
+		}
+	}
+
+	if (warpSensorDevice != kWarpSensorADXL362)
+	{
+		warpDisableI2Cpins();
+	}
+}
+
 
 
 
