@@ -78,15 +78,14 @@
 */
 
 #include "devMMA8451Q.h"
-#include "devSSD1331.h" // Added by O. Tanner
+#include "devSSD1331.h" // O. Tanner
 
-// Added by O.Tanner
-
-#define HW_GPIOA (0U) /*!< Instance number for GPIOA. */
-#define HW_GPIOB (1U) /*!< Instance number for GPIOB. */
+// O.Tanner
 
 #define PORTA_BASE (0x40049000u)
 #define PORTB_BASE (0x4004A000u)
+#define HW_GPIOA (0U)
+#define HW_GPIOB (1U)
 
 #if (!WARP_BUILD_ENABLE_FRDMKL03)
 	#include "devADXL362.h"
@@ -1233,7 +1232,7 @@ printBootSplash(uint16_t gWarpCurrentSupplyVoltage, uint8_t menuRegisterAddress,
 	 *	buffers without overrunning them when at max CPU speed.
 	 */
 	warpPrint("\r\n\n\n\n[ *\t\t\t\tWarp (HW revision C) / Glaux (HW revision B)\t\t\t* ]\n");
-	warpPrint("\r[  \t\t\t\t      Cambridge / Physcomplab / OMAR2   \t\t\t\t  ]\n\n");
+	warpPrint("\r[  \t\t\t\t      Cambridge / Physcomplab / OMAR3   \t\t\t\t  ]\n\n");
 	warpPrint("\r\tSupply=%dmV,\tDefault Target Read Register=0x%02x\n",
 			  gWarpCurrentSupplyVoltage, menuRegisterAddress);
 	warpPrint("\r\tI2C=%dkb/s,\tSPI=%dkb/s,\tUART=%db/s,\tI2C Pull-Up=%d\n\n",
@@ -1687,7 +1686,7 @@ main(void)
 #endif
 
 #if (WARP_BUILD_ENABLE_DEVMMA8451Q)
-		initMMA8451Q(	0x1C	/* i2cAddress */,	kWarpDefaultSupplyVoltageMillivoltsMMA8451Q	);
+		initMMA8451Q(	0x1D	/* i2cAddress */,	kWarpDefaultSupplyVoltageMillivoltsMMA8451Q	);
 #endif
 
 #if (WARP_BUILD_ENABLE_DEVLPS25H)
@@ -1932,9 +1931,7 @@ main(void)
 
     // Run Display initialisation code - O. Tanner
 
-    warpPrint("\n\rRUNNING INIT CODE HERE\n");
     devSSD1331init();
-    warpPrint("\rDONE RUNNING INIT CODE HERE\n");
 
     warpPrint("Press any key to show menu...\n");
     gWarpExtraQuietMode = _originalWarpExtraQuietMode;
