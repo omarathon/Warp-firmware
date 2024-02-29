@@ -140,7 +140,7 @@
 #endif
 
 #if (WARP_BUILD_ENABLE_DEVINA219)
-	voltatile WarpI2CDeviceState deviceINA219State;
+	volatile WarpI2CDeviceState deviceINA219State;
 #endif
 
 #if (WARP_BUILD_ENABLE_DEVLPS25H)
@@ -1699,7 +1699,7 @@ main(void)
 #endif
 
 #if (WARP_BUILD_ENABLE_DEVINA219)
-	initINA219( 0x40 /* I2cAddress */, kWarpDefaultSupplyVoltageMillivoltsINA219 );
+	initINA219( 0x40 /* I2cAddress */, kWarpDefaultSUpplyVoltageMillivoltsINA219 );
 #endif
 
 #if (WARP_BUILD_ENABLE_DEVLPS25H)
@@ -3623,7 +3623,7 @@ printAllSensors(bool printHeadersAndCalibration, bool hexModeFlag,
 #endif
 
 #if (WARP_BUILD_ENABLE_DEVINA219)
-		warpPrint(" INA219 Shunt Voltage, INA219 Bus Voltage, INA219 Power, INA219 Current,")
+		warpPrint(" INA219 Shunt Voltage, INA219 Bus Voltage, INA219 Power, INA219 Current,");
 #endif
 
 #if (WARP_BUILD_ENABLE_DEVMAG3110)
