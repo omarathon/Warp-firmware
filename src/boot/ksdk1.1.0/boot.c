@@ -79,6 +79,7 @@
 
 #include "devMMA8451Q.h"
 #include "devSSD1331.h" // O. Tanner
+#include "devINA219.h" // O. Tanner
 
 // O.Tanner
 
@@ -132,6 +133,10 @@
 
 #if (WARP_BUILD_ENABLE_DEVMMA8451Q)
 	volatile WarpI2CDeviceState			deviceMMA8451QState;
+#endif
+
+#if (WARP_BUILD_ENABLE_DEVINA219)
+	voltatile WarpI2CDeviceState deviceINA219State;
 #endif
 
 #if (WARP_BUILD_ENABLE_DEVLPS25H)
@@ -1689,6 +1694,10 @@ main(void)
 		initMMA8451Q(	0x1D	/* i2cAddress */,	kWarpDefaultSupplyVoltageMillivoltsMMA8451Q	);
 #endif
 
+#if (WARP_BUILD_ENABLE_DEVINA219)
+	initINA219( 0x40 /* I2cAddress */, kWarpDefaultSupplyVoltageMillivoltsINA219 );
+#endif
+
 #if (WARP_BUILD_ENABLE_DEVLPS25H)
 		initLPS25H(	0x5C	/* i2cAddress */,	kWarpDefaultSupplyVoltageMillivoltsLPS25H	);
 #endif
@@ -1931,7 +1940,26 @@ main(void)
 
     // Run Display initialisation code - O. Tanner
 
+	warpPrint("Initialising OLED.\n");
     devSSD1331init();
+	warpPrint("Done initialising OLED.\n\n");
+
+	// Wait 1 second for the OLED to stabalise before reading current
+	OSA_TimeDelay(1000);
+
+	warpPrint("Reading from INA219.\n");
+	warpPrint("current (uA), bus (mV), shunt (uV), power (uW), time (ms)\n");
+	for (int i = 0; i < 1000; i++)
+    {
+        int32_t bus_mV = getBusVoltage_mV_INA219();
+        int32_t shunt_uV = getShuntVoltage_uV_INA219();
+        int32_t current_uA = getCurrent_uA_INA219();
+        int32_t power_uW = getPower_uW_INA219();
+        uint32_t time = OSA_TimeGetMsec();
+        warpPrint("%d, %d, %d, %d, %d\n", current_uA, bus_mV, shunt_uV, power_uW, time);
+		OSA_TimeDelay(1); // Wait 1ms between each measurement
+    }
+	warpPrint("Done reading from INA219.\n");
 
     warpPrint("Press any key to show menu...\n");
     gWarpExtraQuietMode = _originalWarpExtraQuietMode;
@@ -2195,6 +2223,12 @@ main(void)
 					warpPrint("\r\t- 'k' AS7263			(0x00--0x2B): 2.7V -- 3.6V (compiled out) \n");
 #endif
 
+#if (WARP_BUILD_ENABLE_DEVINA219)
+					warpPrint("\r\t- 'l' INA219			(0x00--0x05): 3.0V -- 5.5V\n");
+#else
+					warpPrint("\r\t- 'l' INA219			(0x00--0x05): 3.0V -- 5.5V (compiled out) \n");
+#endif
+
 				warpPrint("\r\tEnter selection> ");
 				key = warpWaitKey();
 
@@ -2341,6 +2375,14 @@ main(void)
 					{
 						menuTargetSensor = kWarpSensorAS7263;
 						menuI2cDevice = &deviceAS7263State;
+						break;
+					}
+#endif
+#if (WARP_BUILD_ENABLE_DEVINA219)
+					case 'l':
+					{
+						menuTargetSensor = kWarpSensorINA219;
+						menuI2cDevice = &deviceINA219State;
 						break;
 					}
 #endif
@@ -3356,6 +3398,10 @@ writeAllSensorsToFlash(int menuDelayBetweenEachRun, int loopForever)
 		bytesWrittenIndex += appendSensorDataMMA8451Q(flashWriteBuf + bytesWrittenIndex);
 #endif
 
+#if (WARP_BUILD_ENABLE_DEVINA219)
+		bytesWrittenIndex += appendSensorDataINA219(flashWriteBuf + bytesWrittenIndex);
+#endif
+
 #if (WARP_BUILD_ENABLE_DEVMAG3110)
 		bytesWrittenIndex += appendSensorDataMAG3110(flashWriteBuf + bytesWrittenIndex);
 #endif
@@ -3570,6 +3616,10 @@ printAllSensors(bool printHeadersAndCalibration, bool hexModeFlag,
 		warpPrint(" MMA8451 x, MMA8451 y, MMA8451 z,");
 #endif
 
+#if (WARP_BUILD_ENABLE_DEVINA219)
+		warpPrint(" INA219 Shunt Voltage, INA219 Bus Voltage, INA219 Power, INA219 Current,")
+#endif
+
 #if (WARP_BUILD_ENABLE_DEVMAG3110)
 		warpPrint(" MAG3110 x, MAG3110 y, MAG3110 z, MAG3110 Temp,");
 #endif
@@ -3620,6 +3670,10 @@ printAllSensors(bool printHeadersAndCalibration, bool hexModeFlag,
 
 #if (WARP_BUILD_ENABLE_DEVMMA8451Q)
 		printSensorDataMMA8451Q(hexModeFlag);
+#endif
+
+#if (WARP_BUILD_ENABLE_DEVINA219)
+		printSensorDataINA219(hexModeFlag);
 #endif
 
 #if (WARP_BUILD_ENABLE_DEVMAG3110)
@@ -3706,6 +3760,7 @@ loopForSensor(	const char *  tagString,
 	int			nCorrects = 0;
 	int			nBadCommands = 0;
 	uint16_t		actualSssupplyMillivolts = sssupplyMillivolts;
+	bool isINA219 = !strcmp(tagString, "\r\nINA219:\n\r"); // Read 2 bytes rather than 1 for INA219
 
 
 	if (	(!spiDeviceState && !i2cDeviceState) ||
@@ -3725,7 +3780,7 @@ loopForSensor(	const char *  tagString,
 	{
 		for (int i = 0; i < readCount; i++) for (int j = 0; j < chunkReadsPerAddress; j++)
 			{
-			status = readSensorRegisterFunction(address+j, 1 /* numberOfBytes */);
+			status = readSensorRegisterFunction(address+j, /* numberOfBytes */ isINA219 ? 2 : 1);
 				if (status == kWarpStatusOK)
 				{
 					nSuccesses++;
@@ -3760,9 +3815,17 @@ loopForSensor(	const char *  tagString,
 
 						if (chatty)
 						{
-						warpPrint("\r\t0x%02x --> 0x%02x\n",
-							address+j,
-									  i2cDeviceState->i2cBuffer[0]);
+							if (isINA219) { // 2 Bytes
+								warpPrint("\r\t0x%02x --> 0x%02x%02x\n",
+                                            address+j,
+                                            i2cDeviceState->i2cBuffer[0],
+                                            i2cDeviceState->i2cBuffer[1]);
+							}
+							else { // 1 Byte
+								warpPrint("\r\t0x%02x --> 0x%02x\n",
+											address+j,
+									  		i2cDeviceState->i2cBuffer[0]);
+							}
 						}
 					}
 				}
@@ -4360,6 +4423,34 @@ repeatRegisterReadForDeviceAndAddress(WarpSensorDevice warpSensorDevice, uint8_t
 			warpPrint("\r\n\tMMA8451Q Read Aborted. Device Disabled :(");
 #endif
 
+			break;
+		}
+
+		case kWarpSensorINA219:
+		{
+/*
+ * INA219: VS 3V--5.5V
+ */
+ #if (WARP_BUILD_ENABLE_INA219)
+				loopForSensor(	"\r\nINA219:\n\r",		/*	tagString			*/
+						&readSensorRegisterINA219,	/*	readSensorRegisterFunction	*/
+						&deviceINA219State,		/*	i2cDeviceState			*/
+						NULL,				/*	spiDeviceState			*/
+						baseAddress,			/*	baseAddress			*/
+						INA219_REG_CONFIG,				/*	minAddress			*/
+						INA219_REG_CALIBRATION,				/*	maxAddress			*/
+						repetitionsPerAddress,		/*	repetitionsPerAddress		*/
+						chunkReadsPerAddress,		/*	chunkReadsPerAddress		*/
+						spinDelay,			/*	spinDelay			*/
+						autoIncrement,			/*	autoIncrement			*/
+						sssupplyMillivolts,		/*	sssupplyMillivolts		*/
+						referenceByte,			/*	referenceByte			*/
+						adaptiveSssupplyMaxMillivolts,	/*	adaptiveSssupplyMaxMillivolts	*/
+						chatty				/*	chatty				*/
+			);
+ #else
+			warpPrint("\r\n\tINA219 Read Aborted. Device Disabled :(")
+#endif
 			break;
 		}
 
