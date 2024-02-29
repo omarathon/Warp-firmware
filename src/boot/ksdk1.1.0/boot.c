@@ -78,7 +78,11 @@
 */
 
 #include "devMMA8451Q.h"
-#include "devSSD1331.h" // O. Tanner
+
+#if (WARP_BUILD_ENABLE_DEVSSD1331)
+	#include "devSSD1331.h" // O. Tanner
+#endif
+
 #include "devINA219.h" // O. Tanner
 
 // O.Tanner
@@ -1237,7 +1241,7 @@ printBootSplash(uint16_t gWarpCurrentSupplyVoltage, uint8_t menuRegisterAddress,
 	 *	buffers without overrunning them when at max CPU speed.
 	 */
 	warpPrint("\r\n\n\n\n[ *\t\t\t\tWarp (HW revision C) / Glaux (HW revision B)\t\t\t* ]\n");
-	warpPrint("\r[  \t\t\t\t      Cambridge / Physcomplab / OMAR CW2   \t\t\t\t  ]\n\n");
+	warpPrint("\r[  \t\t\t\t      Cambridge / Physcomplab / OMAR CW3 1   \t\t\t\t  ]\n\n");
 	warpPrint("\r\tSupply=%dmV,\tDefault Target Read Register=0x%02x\n",
 			  gWarpCurrentSupplyVoltage, menuRegisterAddress);
 	warpPrint("\r\tI2C=%dkb/s,\tSPI=%dkb/s,\tUART=%db/s,\tI2C Pull-Up=%d\n\n",
@@ -1940,9 +1944,11 @@ main(void)
 
     // Run Display initialisation code - O. Tanner
 
-	warpPrint("Initialising OLED.\n");
-    devSSD1331init();
-	warpPrint("Done initialising OLED.\n\n");
+	#if (WARP_BUILD_ENABLE_DEVSSD1331)
+		warpPrint("Initialising OLED.\n");
+    	devSSD1331init();
+		warpPrint("Done initialising OLED.\n\n");
+	#endif
 
 	// Wait 1 second for the OLED to stabalise before reading current
 	OSA_TimeDelay(1000);
