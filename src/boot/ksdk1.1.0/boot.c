@@ -4455,7 +4455,7 @@ repeatRegisterReadForDeviceAndAddress(WarpSensorDevice warpSensorDevice, uint8_t
 						chatty				/*	chatty				*/
 			);
  #else
-			warpPrint("\r\n\tINA219 Read Aborted. Device Disabled :(")
+			warpPrint("\r\n\tINA219 Read Aborted. Device Disabled :(");
 #endif
 			break;
 		}
