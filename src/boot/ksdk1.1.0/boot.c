@@ -1699,7 +1699,7 @@ main(void)
 #endif
 
 #if (WARP_BUILD_ENABLE_DEVINA219)
-	initINA219( 0x40 /* I2cAddress */, kWarpDefaultSUpplyVoltageMillivoltsINA219 );
+	initINA219( 0x40 /* I2cAddress */, kWarpDefaultSupplyVoltageMillivoltsINA219 );
 #endif
 
 #if (WARP_BUILD_ENABLE_DEVLPS25H)
