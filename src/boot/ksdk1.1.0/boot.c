@@ -1954,7 +1954,7 @@ main(void)
 	OSA_TimeDelay(1000);
 
 	warpPrint("Reading from INA219.\n");
-	warpPrint("current (uA), time (ms)\n");
+	warpPrint("Current (uA), Time (ms)\n");
 	for (int i = 0; i < 1000; i++)
     {
         int32_t current = getCurrent_uA_INA219();
