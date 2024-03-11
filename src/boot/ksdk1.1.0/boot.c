@@ -3599,7 +3599,7 @@ printAllSensors(bool printHeadersAndCalibration, bool hexModeFlag,
 #if (WARP_CSVSTREAM_FLASH_PRINT_METADATA)
 		warpPrint(" RTC->TSR, RTC->TPR,");
 #endif
-		warpPrint(" numberOfConfigErrors");
+		warpPrint(" ,time, numberOfConfigErrors=%u",numberOfConfigErrors);
 		warpPrint("\n\n");
 	}
 
@@ -3651,10 +3651,11 @@ printAllSensors(bool printHeadersAndCalibration, bool hexModeFlag,
 #if (WARP_CSVSTREAM_FLASH_PRINT_METADATA)
 		warpPrint(" %12d, %6d,", RTC->TSR, RTC->TPR);
 #endif
-		warpPrint(" %u\n", numberOfConfigErrors);
-
+		uint32_t time = OSA_TimeGetMsec();
+		warpPrint(" %d\n", time);
 		if (menuDelayBetweenEachRun > 0)
 		{
+			warpPrint("delaying...\n");
 			// while (OSA_TimeGetMsec() - timeAtStart < menuDelayBetweenEachRun)
 			// {
 			// }
