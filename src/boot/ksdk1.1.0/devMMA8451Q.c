@@ -132,6 +132,8 @@ configureSensorMMA8451Q(uint8_t payloadF_SETUP, uint8_t payloadCTRL_REG1)
 {
 	WarpStatus	i2cWriteStatus1, i2cWriteStatus2;
 
+	warpPrint("Configuring MMA8451Q: payloadF_SETUP=%d,payloadCTRL_REG1=%d", payloadF_SETUP, payloadCTRL_REG1);
+
 
 	warpScaleSupplyVoltage(deviceMMA8451QState.operatingVoltageMillivolts);
 
