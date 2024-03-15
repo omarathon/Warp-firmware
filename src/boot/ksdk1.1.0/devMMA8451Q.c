@@ -265,7 +265,6 @@ measureActivityForeverMMA8451Q()
 	uint32_t prevResultTimestamp = OSA_TimeGetMsec();
 
 	uint16_t numMeasurements = 0;
-	uint16_t numSteps = 0;
 
 	int16_t xAccMax = -32768;
 	int16_t xAccMin = 32767;
@@ -389,8 +388,6 @@ measureActivityForeverMMA8451Q()
 
 		if (prevFilteredAcc < baseline && curFilteredAcc >= baseline && (timestamp - prevStepTimestampMean > 100)) {
 			// We have a step.
-			numSteps++;
-			
 			float errAcc = (2.68f/100.0f) * curFilteredAcc;
 			float timestampStepLower = prevAccTimestamp + ((baseline - (prevFilteredAcc - errAcc)) * (timestamp - prevAccTimestamp) / ((curFilteredAcc + errAcc) - (prevFilteredAcc - errAcc)));
 			float timestampStepUpper;
@@ -440,22 +437,50 @@ measureActivityForeverMMA8451Q()
 			warpPrint("\n");
 			
 			// Use CDF to compute event probabilities.
-			// float PDF(float mean, float var, float a, float b)
-
-			float pWalk = PDF(timeBetweenStepsMean, timeBetweenStepsVar, 500.0, 650.0) * PDF(timeBetweenStepsMean, timeBetweenStepsMeanVar, 500.0, 650.0);
-			float pJog = PDF(timeBetweenStepsMean, timeBetweenStepsVar, 350.0, 500.0) * PDF(timeBetweenStepsMean, timeBetweenStepsMeanVar, 350.0, 500.0);
-			float pRun = PDF(timeBetweenStepsMean, timeBetweenStepsVar, 200.0, 350.0) * PDF(timeBetweenStepsMean, timeBetweenStepsMeanVar, 200.0, 350.0);
-			float pNone = 1 - pWalk - pJog - pRun;
-
-			warpPrint("pWalk=");
-			floatPrint(pWalk);
-			warpPrint(",pJog=");
-			floatPrint(pJog);
-			warpPrint(",pRun=");
-			floatPrint(pRun);
-			warpPrint(",pNone=");
-			floatPrint(pNone);
-			warpPrint("\n");
+			// Try 4 different methods:
+			// 1. without the mean variance error
+			// 2. with the mean variance error, over the same interval as the variance error
+			// 3. with the mean variance error, over 2x the interval as the variance error
+			// 4. with the mean variance error, over 4x the interval as the variance error
+			float pWalkNoMeanVar = PDF(timeBetweenStepsMean, timeBetweenStepsVar, 428, 662);
+			float pJogNoMeanVar = PDF(timeBetweenStepsMean, timeBetweenStepsVar, 372, 428);
+			float pRunNoMeanVar = PDF(timeBetweenStepsMean, timeBetweenStepsVar, 314, 372);
+			for (uint8_t method = 0; method < 4; method++) {
+				float pWalk;
+				float pJog;
+				float pRun;
+				switch (method) {
+					case 0:
+						pWalk = pWalkNoMeanVar;
+						pJog = pJogNoMeanVar;
+						pRun = pRunNoMeanVar;
+						break;
+					case 1:
+						pWalk = pWalkNoMeanVar + PDF(timeBetweenStepsMean, timeBetweenStepsMeanVar, 545 - 1 * (545 - 428), 545 + 1 * (545 - 428));
+						pJog = pJogNoMeanVar + PDF(timeBetweenStepsMean, timeBetweenStepsMeanVar, 400 - 1 * (400 - 372), 400 + 1 * (400 - 372));
+						pRun = pRunNoMeanVar + PDF(timeBetweenStepsMean, timeBetweenStepsMeanVar, 343 - 1 * (343 - 314), 343 + 1 * (343 - 314));
+						break;
+					case 2:
+						pWalk = pWalkNoMeanVar + PDF(timeBetweenStepsMean, timeBetweenStepsMeanVar, 545 - 2 * (545 - 428), 545 + 2 * (545 - 428));
+						pJog = pJogNoMeanVar + PDF(timeBetweenStepsMean, timeBetweenStepsMeanVar, 400 - 2 * (400 - 372), 400 + 2 * (400 - 372));
+						pRun = pRunNoMeanVar + PDF(timeBetweenStepsMean, timeBetweenStepsMeanVar, 343 - 2 * (343 - 314), 343 + 2 * (343 - 314));
+						break;
+					default: // 3
+						pWalk = pWalkNoMeanVar + PDF(timeBetweenStepsMean, timeBetweenStepsMeanVar, 545 - 4 * (545 - 428), 545 + 4 * (545 - 428));
+						pJog = pJogNoMeanVar + PDF(timeBetweenStepsMean, timeBetweenStepsMeanVar, 400 - 4 * (400 - 372), 400 + 4 * (400 - 372));
+						pRun = pRunNoMeanVar + PDF(timeBetweenStepsMean, timeBetweenStepsMeanVar, 343 - 4 * (343 - 314), 343 + 4 * (343 - 314));
+				}
+				float pNone = 1 - pWalk - pJog - pRun;
+				warpPrint("method=%u: pWalk=", method);
+				floatPrint(pWalk);
+				warpPrint(",pJog=");
+				floatPrint(pJog);
+				warpPrint(",pRun=");
+				floatPrint(pRun);
+				warpPrint(",pNone=");
+				floatPrint(pNone);
+				warpPrint("\n");
+			}
 
 			// Reset variables for the next window.
 			timeBetweenStepsCount = 0;
@@ -475,10 +500,10 @@ measureActivityForeverMMA8451Q()
 				baseline = zAccMin + (zAccMax - zAccMin) / 2.0f;
 			}
 
-			warpPrint("baselineAxis=%u\n, baseline=", baselineAxis);
+			warpPrint("baselineAxis=%u, baseline=", baselineAxis);
 			floatPrint(baseline);
 			warpPrint("\n");
-			warpPrint("numMeasurements=%u,numSteps=%u\n", numMeasurements, numSteps);
+			warpPrint("numMeasurements=%u,numSteps=%u\n", numMeasurements, timeBetweenStepsCount);
 
 			// Reset baseline estimators.
 			xAccMax = -32768;
@@ -489,7 +514,6 @@ measureActivityForeverMMA8451Q()
 			zAccMin = 32767;
 
 			numMeasurements = 0;
-			numSteps = 0;
 		}
 
 		prevAccTimestamp = timestamp;
