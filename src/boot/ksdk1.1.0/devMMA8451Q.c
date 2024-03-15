@@ -290,6 +290,7 @@ measureActivityForeverMMA8451Q()
 
 	/* Measure the activity forever. */
 	while(true) {
+
 		/* Read the accelerations. */
 
 		uint16_t	readSensorRegisterValueLSB;
@@ -417,6 +418,8 @@ measureActivityForeverMMA8451Q()
 			floatPrint(pJog);
 			warpPrint(",pRun=");
 			floatPrint(pRun);
+			warpPrint(",pNone=");
+			floatPrint(pNone);
 			warpPrint("\n");
 
 			// Reset variables for the next window.
@@ -440,12 +443,12 @@ measureActivityForeverMMA8451Q()
 			warpPrint("baseline=%u\n", baselineAxis);
 
 			// Reset baseline estimators.
-			int16_t xAccMax = -32768;
-			int16_t xAccMin = 32767;
-			int16_t yAccMax = -32768;
-			int16_t yAccMin = 32767;
-			int16_t zAccMax = -32768;
-			int16_t zAccMin = 32767;
+			xAccMax = -32768;
+			xAccMin = 32767;
+			yAccMax = -32768;
+			yAccMin = 32767;
+			zAccMax = -32768;
+			zAccMin = 32767;
 		}
 
 		prevAccTimestamp = timestamp;
