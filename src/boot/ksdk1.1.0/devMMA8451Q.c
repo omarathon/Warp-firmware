@@ -387,7 +387,13 @@ measureActivityForeverMMA8451Q()
 			
 			float errAcc = (2.68f/100.0f) * curFilteredAcc;
 			float timestampStepLower = prevAccTimestamp + ((baseline - (prevFilteredAcc - errAcc)) * (timestamp - prevAccTimestamp) / ((curFilteredAcc + errAcc) - (prevFilteredAcc - errAcc)));
-			float timestampStepUpper = prevAccTimestamp + ((baseline - (prevFilteredAcc + errAcc)) * (timestamp - prevAccTimestamp) / ((curFilteredAcc - errAcc) - (prevFilteredAcc + errAcc)));
+			float timestampStepUpper;
+			if ((prevFilteredAcc + errAcc >= baseline) || (curFilteredAcc - errAcc <= baseline)) {
+				timestampStepUpper = timestamp;
+			}
+			else {
+				timestampStepUpper = prevAccTimestamp + ((baseline - (prevFilteredAcc + errAcc)) * (timestamp - prevAccTimestamp) / ((curFilteredAcc - errAcc) - (prevFilteredAcc + errAcc)));
+			}
 			float timestampStepMean = (timestampStepUpper + timestampStepLower) / 2.0f;
       		float timestampStepDev = (timestampStepUpper - timestampStepLower) / 2.0f;
 
