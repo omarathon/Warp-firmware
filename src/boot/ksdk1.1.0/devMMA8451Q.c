@@ -352,6 +352,9 @@ measureActivityForeverMMA8451Q()
 		xAccMax = max(xAcc, xAccMax);
 		yAccMax = max(yAcc, yAccMax);
 		zAccMax = max(zAcc, zAccMax);
+		xAccMin = min(xAcc, xAccMin);
+		yAccMin = min(yAcc, yAccMin);
+		zAccMin = min(zAcc, zAccMin);
 
 		int16_t curAcc = baselineAxis == 0 ? xAccMax : (baselineAxis == 1 ? yAccMax : zAccMax);
 		float curFilteredAcc = (prevAccs[0] + prevAccs[1] + prevAccs[2] + curAcc) / 4.0f;
