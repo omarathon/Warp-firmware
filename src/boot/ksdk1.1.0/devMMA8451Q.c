@@ -282,7 +282,6 @@ measureActivityForeverMMA8451Q()
 	uint32_t prevAccTimestamp = prevResultTimestamp;
 	float prevStepTimestampMean = prevResultTimestamp;
 	float prevStepTimestampDev = 0;
-	float prevStepTimestamp = prevResultTimestamp;
 
 	// Time between steps running average.
 	float timeBetweenStepsMean = 0;
@@ -353,8 +352,15 @@ measureActivityForeverMMA8451Q()
 
 		numMeasurements++;
 
-		const uint32_t timestamp = OSA_TimeGetMsec();
-		
+		uint32_t timestamp = OSA_TimeGetMsec();
+		// check if the clock looped. if so, ignore this measurement as we don't know the time it happened
+		if (timestamp <= prevAccTimestamp) {
+			prevStepTimestampMean = timestamp;
+			prevAccTimestamp = timestamp;
+			prevResultTimestamp = timestamp;
+			continue;
+		}
+
 		xAccMax = max(xAcc, xAccMax);
 		yAccMax = max(yAcc, yAccMax);
 		zAccMax = max(zAcc, zAccMax);
@@ -381,7 +387,7 @@ measureActivityForeverMMA8451Q()
 		floatPrint(prevStepTimestampMean);
 		warpPrint("\n");
 
-		if (prevFilteredAcc < baseline && curFilteredAcc >= baseline && (timestamp - prevStepTimestamp > 100)) {
+		if (prevFilteredAcc < baseline && curFilteredAcc >= baseline && (timestamp - prevStepTimestampMean > 100)) {
 			// We have a step.
 			numSteps++;
 			
@@ -418,7 +424,6 @@ measureActivityForeverMMA8451Q()
 
 			prevStepTimestampMean = timestampStepMean;
 			prevStepTimestampDev = timestampStepDev;
-			prevStepTimestamp = timestamp;
 		}
 
 		// Give results every 10ms.
