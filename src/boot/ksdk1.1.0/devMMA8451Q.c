@@ -275,7 +275,7 @@ measureActivityForeverMMA8451Q()
 	int16_t zAccMin = 32767;
 
 	// For the current axis.
-	int16_t baseline = 0;
+	float baseline = 0;
 	uint8_t baselineAxis = 0; // 0 == x, 1 == y, 2 == z
 	int16_t prevAccs[3] = {0, 0, 0}; // Unfiltered.
 	float prevFilteredAcc = 0;
