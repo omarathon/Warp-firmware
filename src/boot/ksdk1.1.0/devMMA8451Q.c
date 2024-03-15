@@ -282,6 +282,7 @@ measureActivityForeverMMA8451Q()
 	uint32_t prevAccTimestamp = prevResultTimestamp;
 	float prevStepTimestampMean = prevResultTimestamp;
 	float prevStepTimestampDev = 0;
+	float prevStepTimestamp = prevResultTimestamp;
 
 	// Time between steps running average.
 	float timeBetweenStepsMean = 0;
@@ -380,7 +381,7 @@ measureActivityForeverMMA8451Q()
 		// floatPrint(prevStepTimestampMean);
 		// warpPrint("\n");
 
-		if (prevFilteredAcc < baseline && curFilteredAcc >= baseline && (timestamp - prevStepTimestampMean > 100)) {
+		if (prevFilteredAcc < baseline && curFilteredAcc >= baseline && (timestamp - prevStepTimestamp > 100)) {
 			// We have a step.
 			numSteps++;
 			
@@ -411,6 +412,7 @@ measureActivityForeverMMA8451Q()
 
 			prevStepTimestampMean = timestampStepMean;
 			prevStepTimestampDev = timestampStepDev;
+			prevStepTimestamp = timestamp;
 		}
 
 		// Give results every 10ms.
