@@ -264,6 +264,8 @@ measureActivityForeverMMA8451Q()
 	/* Algorithm variables. */
 	uint32_t prevResultTimestamp = OSA_TimeGetMsec();
 
+	uint16_t numMeasurements = 0;
+
 	int16_t xAccMax = -32768;
 	int16_t xAccMin = 32767;
 	int16_t yAccMax = -32768;
@@ -346,6 +348,8 @@ measureActivityForeverMMA8451Q()
 
 		/* ======== */
 		/* Accelerations have been read into xAcc, yAcc and zAcc. Update algorithm. */
+
+		numMeasurements++;
 
 		const uint32_t timestamp = OSA_TimeGetMsec();
 		
@@ -446,6 +450,7 @@ measureActivityForeverMMA8451Q()
 			warpPrint("baselineAxis=%u\n, baseline=", baselineAxis);
 			floatPrint(baseline);
 			warpPrint("\n");
+			warpPrint("numMeasurements=%u\n", numMeasurements);
 
 			// Reset baseline estimators.
 			xAccMax = -32768;
@@ -454,6 +459,8 @@ measureActivityForeverMMA8451Q()
 			yAccMin = 32767;
 			zAccMax = -32768;
 			zAccMin = 32767;
+
+			numMeasurements = 0;
 		}
 
 		prevAccTimestamp = timestamp;
