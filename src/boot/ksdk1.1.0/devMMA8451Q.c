@@ -365,7 +365,7 @@ measureActivityForeverMMA8451Q()
 		warpPrint(",yAcc=%d", yAcc);
 		warpPrint(",zAcc=%d\n", zAcc);
 
-		int16_t curAcc = baselineAxis == 0 ? xAccMax : (baselineAxis == 1 ? yAccMax : zAccMax);
+		int16_t curAcc = baselineAxis == 0 ? xAcc : (baselineAxis == 1 ? yAcc : zAcc);
 		float curFilteredAcc = (prevAccs[0] + prevAccs[1] + prevAccs[2] + curAcc) / 4.0f;
 
 		prevAccs[0] = prevAccs[1];
