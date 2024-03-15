@@ -410,7 +410,7 @@ measureActivityForeverMMA8451Q()
 			// Use CDF to compute event probabilities.
 			// float PDF(float mean, float dev, float a, float b)
 
-			float pWalk = PDF(timeBetweenStepsMean, timeBetweenStepsVar, 500.0, 650.0) * PDF(timeBetweenStepsMean, timeBetweenStepsMeanVar, 500.0, 650).0;
+			float pWalk = PDF(timeBetweenStepsMean, timeBetweenStepsVar, 500.0, 650.0) * PDF(timeBetweenStepsMean, timeBetweenStepsMeanVar, 500.0, 650.0);
 			float pJog = PDF(timeBetweenStepsMean, timeBetweenStepsVar, 350.0, 500.0) * PDF(timeBetweenStepsMean, timeBetweenStepsMeanVar, 350.0, 500.0);
 			float pRun = PDF(timeBetweenStepsMean, timeBetweenStepsVar, 200.0, 350.0) * PDF(timeBetweenStepsMean, timeBetweenStepsMeanVar, 200.0, 350.0);
 			float pNone = 1 - pWalk - pJog - pRun;
