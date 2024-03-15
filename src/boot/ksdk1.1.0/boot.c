@@ -2099,7 +2099,12 @@ main(void)
 			 */
 			case 'w':
 			{
-				warpPrint("Forever measuring activity from the MMA8451Q.\n");
+				uint32_t numberOfConfigErrors = 0;
+				numberOfConfigErrors += configureSensorMMA8451Q(
+					0x00, /* Payload: Disable FIFO */
+					0x01  /* Normal read 8bit, 800Hz, normal, active mode */
+				);
+				warpPrint("\nForever measuring activity from the MMA8451Q. Errors=%u.\n", numberOfConfigErrors);
 				measureActivityForeverMMA8451Q();
 				break;
 			}

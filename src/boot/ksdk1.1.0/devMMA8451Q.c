@@ -410,9 +410,9 @@ measureActivityForeverMMA8451Q()
 			// Use CDF to compute event probabilities.
 			// float PDF(float mean, float dev, float a, float b)
 
-			float pWalk = PDF(timeBetweenStepsMean, timeBetweenStepsVar, 500, 650) * PDF(timeBetweenStepsMean, timeBetweenStepsMeanVar, 500, 650);
-			float pJog = PDF(timeBetweenStepsMean, timeBetweenStepsVar, 350, 500) * PDF(timeBetweenStepsMean, timeBetweenStepsMeanVar, 350, 500);
-			float pRun = PDF(timeBetweenStepsMean, timeBetweenStepsVar, 200, 350) * PDF(timeBetweenStepsMean, timeBetweenStepsMeanVar, 200, 350);
+			float pWalk = PDF(timeBetweenStepsMean, timeBetweenStepsVar, 500.0, 650.0) * PDF(timeBetweenStepsMean, timeBetweenStepsMeanVar, 500.0, 650).0;
+			float pJog = PDF(timeBetweenStepsMean, timeBetweenStepsVar, 350.0, 500.0) * PDF(timeBetweenStepsMean, timeBetweenStepsMeanVar, 350.0, 500.0);
+			float pRun = PDF(timeBetweenStepsMean, timeBetweenStepsVar, 200.0, 350.0) * PDF(timeBetweenStepsMean, timeBetweenStepsMeanVar, 200.0, 350.0);
 			float pNone = 1 - pWalk - pJog - pRun;
 
 			warpPrint("pWalk=");
@@ -443,7 +443,9 @@ measureActivityForeverMMA8451Q()
 				baseline = zAccMin + (zAccMax - zAccMin) / 2.0f;
 			}
 
-			warpPrint("baseline=%u\n", baselineAxis);
+			warpPrint("baselineAxis=%u\n, baseline=", baselineAxis);
+			floatPrint(baseline);
+			warpPrint("\n");
 
 			// Reset baseline estimators.
 			xAccMax = -32768;
