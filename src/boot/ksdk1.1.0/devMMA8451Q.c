@@ -439,6 +439,7 @@ measureActivityForeverMMA8451Q()
 			// Use CDF to compute event probabilities.
 			// Try 3 different methods with variance error 1x and 2x respectively.
 			// 1. with no mean variance error, 2. with 2x intervals, and 3. with 4x intervals.
+			uint8_t method_id = 0;
 			for (uint8_t var_mult = 1; var_mult <= 2; var_mult++) {
 				float pWalkNoMeanVar = PDF(timeBetweenStepsMean, timeBetweenStepsVar, 545 - var_mult * (545 - 428), 545 + var_mult * (545 - 428));
 				float pJogNoMeanVar = PDF(timeBetweenStepsMean, timeBetweenStepsVar, 400 - var_mult * (400 - 372), 400 + var_mult * (400 - 372));
@@ -464,7 +465,7 @@ measureActivityForeverMMA8451Q()
 							pRun = pRunNoMeanVar * PDF(timeBetweenStepsMean, timeBetweenStepsMeanVar, 343 - 4 * (343 - 314), 343 + 4 * (343 - 314));
 					}
 					float pNone = 1 - pWalk - pJog - pRun;
-					warpPrint("method=%u: pWalk=", (var_mult * method));
+					warpPrint("method=%u: pWalk=", method_id++);
 					floatPrint(pWalk);
 					warpPrint(",pJog=");
 					floatPrint(pJog);
