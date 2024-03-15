@@ -362,9 +362,9 @@ measureActivityForeverMMA8451Q()
 		yAccMin = min(yAcc, yAccMin);
 		zAccMin = min(zAcc, zAccMin);
 
-		// warpPrint("xAcc=%d", xAcc);
-		// warpPrint(",yAcc=%d", yAcc);
-		// warpPrint(",zAcc=%d\n", zAcc);
+		warpPrint("xAcc=%d", xAcc);
+		warpPrint(",yAcc=%d", yAcc);
+		warpPrint(",zAcc=%d\n", zAcc);
 
 		int16_t curAcc = baselineAxis == 0 ? xAcc : (baselineAxis == 1 ? yAcc : zAcc);
 		float curFilteredAcc = (prevAccs[0] + prevAccs[1] + prevAccs[2] + curAcc) / 4.0f;
@@ -373,13 +373,13 @@ measureActivityForeverMMA8451Q()
 		prevAccs[1] = prevAccs[2];
 		prevAccs[2] = curAcc;
 
-		// warpPrint("prevFilteredAcc=");
-		// floatPrint(prevFilteredAcc);
-		// warpPrint(",curFilteredAcc=");
-		// floatPrint(curFilteredAcc);
-		// warpPrint(",t=%u,prevTimestampMean=", timestamp);
-		// floatPrint(prevStepTimestampMean);
-		// warpPrint("\n");
+		warpPrint("prevFilteredAcc=");
+		floatPrint(prevFilteredAcc);
+		warpPrint(",curFilteredAcc=");
+		floatPrint(curFilteredAcc);
+		warpPrint(",t=%u,prevTimestampMean=", timestamp);
+		floatPrint(prevStepTimestampMean);
+		warpPrint("\n");
 
 		if (prevFilteredAcc < baseline && curFilteredAcc >= baseline && (timestamp - prevStepTimestamp > 100)) {
 			// We have a step.
