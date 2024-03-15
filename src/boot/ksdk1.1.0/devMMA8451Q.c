@@ -437,16 +437,12 @@ measureActivityForeverMMA8451Q()
 			warpPrint("\n");
 			
 			// Use CDF to compute event probabilities.
-			// Try 4 different methods:
-			// 1. without the mean variance error
-			// 2. without the mean variance error, 2x the variance
-			// 3. with the mean variance error, over the same interval as the variance error
-			// 4. with the mean variance error, over 2x the interval as the variance error
-			// 5. with the mean variance error, over 4x the interval as the variance error
-			float pWalkNoMeanVar = PDF(timeBetweenStepsMean, timeBetweenStepsVar, 428, 662);
-			float pJogNoMeanVar = PDF(timeBetweenStepsMean, timeBetweenStepsVar, 372, 428);
-			float pRunNoMeanVar = PDF(timeBetweenStepsMean, timeBetweenStepsVar, 314, 372);
-			for (uint8_t method = 0; method < 5; method++) {
+			// Try 3 different methods with variance error 2x in all.
+			// 1. with the mean variance error as 2x intervals, 2. as 3x, and 4. as 4x.
+			float pWalkNoMeanVar = PDF(timeBetweenStepsMean, timeBetweenStepsVar, 545 - 2 * (545 - 428), 545 + 2 * (545 - 428));
+			float pJogNoMeanVar = PDF(timeBetweenStepsMean, timeBetweenStepsVar, 400 - 2 * (400 - 372), 400 + 2 * (400 - 372));
+			float pRunNoMeanVar = PDF(timeBetweenStepsMean, timeBetweenStepsVar, 343 - 2 * (343 - 314), 343 + 2 * (343 - 314));
+			for (uint8_t method = 0; method < 4; method++) {
 				float pWalk;
 				float pJog;
 				float pRun;
@@ -457,21 +453,16 @@ measureActivityForeverMMA8451Q()
 						pRun = pRunNoMeanVar;
 						break;
 					case 1:
-						pWalk = PDF(timeBetweenStepsMean, timeBetweenStepsVar, 545 - 2 * (545 - 428), 545 + 2 * (545 - 428));
-						pJog = PDF(timeBetweenStepsMean, timeBetweenStepsVar, 400 - 2 * (400 - 372), 400 + 2 * (400 - 372));
-						pRun = PDF(timeBetweenStepsMean, timeBetweenStepsVar, 343 - 2 * (343 - 314), 343 + 2 * (343 - 314));
+						pWalk = pWalkNoMeanVar * PDF(timeBetweenStepsMean, timeBetweenStepsVar, 545 - 2 * (545 - 428), 545 + 2 * (545 - 428));
+						pJog = pJogNoMeanVar * PDF(timeBetweenStepsMean, timeBetweenStepsVar, 400 - 2 * (400 - 372), 400 + 2 * (400 - 372));
+						pRun = pRunNoMeanVar * PDF(timeBetweenStepsMean, timeBetweenStepsVar, 343 - 2 * (343 - 314), 343 + 2 * (343 - 314));
 						break;
 					case 2:
-						pWalk = pWalkNoMeanVar * PDF(timeBetweenStepsMean, timeBetweenStepsMeanVar, 545 - 1 * (545 - 428), 545 + 1 * (545 - 428));
-						pJog = pJogNoMeanVar * PDF(timeBetweenStepsMean, timeBetweenStepsMeanVar, 400 - 1 * (400 - 372), 400 + 1 * (400 - 372));
-						pRun = pRunNoMeanVar * PDF(timeBetweenStepsMean, timeBetweenStepsMeanVar, 343 - 1 * (343 - 314), 343 + 1 * (343 - 314));
+						pWalk = pWalkNoMeanVar * PDF(timeBetweenStepsMean, timeBetweenStepsMeanVar, 545 - 3 * (545 - 428), 545 + 3 * (545 - 428));
+						pJog = pJogNoMeanVar * PDF(timeBetweenStepsMean, timeBetweenStepsMeanVar, 400 - 3 * (400 - 372), 400 + 3 * (400 - 372));
+						pRun = pRunNoMeanVar * PDF(timeBetweenStepsMean, timeBetweenStepsMeanVar, 343 - 3 * (343 - 314), 343 + 3 * (343 - 314));
 						break;
-					case 3:
-						pWalk = pWalkNoMeanVar * PDF(timeBetweenStepsMean, timeBetweenStepsMeanVar, 545 - 2 * (545 - 428), 545 + 2 * (545 - 428));
-						pJog = pJogNoMeanVar * PDF(timeBetweenStepsMean, timeBetweenStepsMeanVar, 400 - 2 * (400 - 372), 400 + 2 * (400 - 372));
-						pRun = pRunNoMeanVar * PDF(timeBetweenStepsMean, timeBetweenStepsMeanVar, 343 - 2 * (343 - 314), 343 + 2 * (343 - 314));
-						break;
-					default: // 4
+					default: // 3
 						pWalk = pWalkNoMeanVar * PDF(timeBetweenStepsMean, timeBetweenStepsMeanVar, 545 - 4 * (545 - 428), 545 + 4 * (545 - 428));
 						pJog = pJogNoMeanVar * PDF(timeBetweenStepsMean, timeBetweenStepsMeanVar, 400 - 4 * (400 - 372), 400 + 4 * (400 - 372));
 						pRun = pRunNoMeanVar * PDF(timeBetweenStepsMean, timeBetweenStepsMeanVar, 343 - 4 * (343 - 314), 343 + 4 * (343 - 314));
