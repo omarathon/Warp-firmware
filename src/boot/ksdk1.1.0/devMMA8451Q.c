@@ -395,7 +395,7 @@ measureActivityForeverMMA8451Q()
 			float timeDiffStepVar = timestampStepDev * timestampStepDev + prevStepTimestampDev * prevStepTimestampDev;
 
 			// Update running average of stride time using the Welford method: https://changyaochen.github.io/welford and Quadrature.
-			if (timeBetweenStepsCount == 1) {
+			if (timeBetweenStepsCount == 0) {
 				timeBetweenStepsMean = timeDiffStepMean;
 				timeBetweenStepsVar = 0;
 				timeBetweenStepsMeanVar = timeDiffStepVar;
