@@ -2718,6 +2718,16 @@ main(void)
 			}
 
 			/*
+			 *  Monitor activity from accelerometer.
+			 */
+			case 'w':
+			{
+				warpPrint("Forever measuring activity from the MMA8451Q.\n");
+				measureActivityForeverMMA8451Q();
+				break;
+			}
+
+			/*
 			 *	Dump all the sensor data in one go
 			 */
 			case 'z':
@@ -3353,7 +3363,7 @@ writeAllSensorsToFlash(int menuDelayBetweenEachRun, int loopForever)
 #endif
 
 #if (WARP_BUILD_ENABLE_DEVMMA8451Q)
-		bytesWrittenIndex += appendSensorDataMMA8451Q(flashWriteBuf + bytesWrittenIndex);
+		//bytesWrittenIndex += appendSensorDataMMA8451Q(flashWriteBuf + bytesWrittenIndex);
 #endif
 
 #if (WARP_BUILD_ENABLE_DEVMAG3110)
@@ -3619,7 +3629,7 @@ printAllSensors(bool printHeadersAndCalibration, bool hexModeFlag,
 #endif
 
 #if (WARP_BUILD_ENABLE_DEVMMA8451Q)
-		printSensorDataMMA8451Q(hexModeFlag);
+		//printSensorDataMMA8451Q(hexModeFlag);
 #endif
 
 #if (WARP_BUILD_ENABLE_DEVMAG3110)
