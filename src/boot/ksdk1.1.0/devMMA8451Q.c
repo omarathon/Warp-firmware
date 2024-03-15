@@ -264,12 +264,12 @@ measureActivityForeverMMA8451Q()
 	/* Algorithm variables. */
 	uint32_t prevResultTimestamp = OSA_TimeGetMsec();
 
-	int16_t xAccMax = -9999999;
-	int16_t xAccMin = 9999999;
-	int16_t yAccMax = -9999999;
-	int16_t yAccMin = 9999999;
-	int16_t zAccMax = -9999999;
-	int16_t zAccMin = 9999999;
+	int16_t xAccMax = -32768;
+	int16_t xAccMin = 32767;
+	int16_t yAccMax = -32768;
+	int16_t yAccMin = 32767;
+	int16_t zAccMax = -32768;
+	int16_t zAccMin = 32767;
 
 	// For the current axis.
 	int16_t baseline = 0;
@@ -278,7 +278,6 @@ measureActivityForeverMMA8451Q()
 	float prevFilteredAcc = 0;
 	uint32_t prevAccTimestamp = prevResultTimestamp;
 	float prevStepTimestampMean = prevResultTimestamp;
-	float prevStepTimestampMean = 0;
 	float prevStepTimestampDev = 0;
 
 	// Time between steps running average.
@@ -291,8 +290,6 @@ measureActivityForeverMMA8451Q()
 
 	/* Measure the activity forever. */
 	while(true) {
-		const uint32_t timestamp = OSA_TimeGetMsec();
-
 		/* Read the accelerations. */
 
 		uint16_t	readSensorRegisterValueLSB;
@@ -443,12 +440,12 @@ measureActivityForeverMMA8451Q()
 			warpPrint("baseline=%u\n", baselineAxis);
 
 			// Reset baseline estimators.
-			int16_t xAccMax = -9999999;
-			int16_t xAccMin = 9999999;
-			int16_t yAccMax = -9999999;
-			int16_t yAccMin = 9999999;
-			int16_t zAccMax = -9999999;
-			int16_t zAccMin = 9999999;
+			int16_t xAccMax = -32768;
+			int16_t xAccMin = 32767;
+			int16_t yAccMax = -32768;
+			int16_t yAccMin = 32767;
+			int16_t zAccMax = -32768;
+			int16_t zAccMin = 32767;
 		}
 
 		prevAccTimestamp = timestamp;
