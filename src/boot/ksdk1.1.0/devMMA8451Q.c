@@ -241,9 +241,9 @@ float phi(float x)
     return 0.5*(1.0 + sign*y);
 }
 
-// Probability that a < v < b given mu(v) and sigma(v).
-float PDF(float mean, float dev, float a, float b) {
-	return phi((b - mean) / dev) - phi((a - mean) / dev);
+// Probability that a < v < b given mu(v) and sigma^2(v).
+float PDF(float mean, float var, float a, float b) {
+	return phi((b - mean) / sqrtf(var)) - phi((a - mean) / sqrtf(var));
 }
 
 void floatPrint(float to_print) {
@@ -440,7 +440,7 @@ measureActivityForeverMMA8451Q()
 			warpPrint("\n");
 			
 			// Use CDF to compute event probabilities.
-			// float PDF(float mean, float dev, float a, float b)
+			// float PDF(float mean, float var, float a, float b)
 
 			float pWalk = PDF(timeBetweenStepsMean, timeBetweenStepsVar, 500.0, 650.0) * PDF(timeBetweenStepsMean, timeBetweenStepsMeanVar, 500.0, 650.0);
 			float pJog = PDF(timeBetweenStepsMean, timeBetweenStepsVar, 350.0, 500.0) * PDF(timeBetweenStepsMean, timeBetweenStepsMeanVar, 350.0, 500.0);
