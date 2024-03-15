@@ -265,6 +265,7 @@ measureActivityForeverMMA8451Q()
 	uint32_t prevResultTimestamp = OSA_TimeGetMsec();
 
 	uint16_t numMeasurements = 0;
+	uint16_t numSteps = 0;
 
 	int16_t xAccMax = -32768;
 	int16_t xAccMin = 32767;
@@ -369,6 +370,8 @@ measureActivityForeverMMA8451Q()
 
 		if (prevFilteredAcc < baseline && curFilteredAcc >= baseline && (timestamp - prevStepTimestampMean > 100)) {
 			// We have a step.
+			numSteps++;
+			
 			float errAcc = (2.68f/100.0f) * curFilteredAcc;
 			float timestampStepLower = prevAccTimestamp + ((baseline - (prevFilteredAcc - errAcc)) * (timestamp - prevAccTimestamp) / ((curFilteredAcc + errAcc) - (prevFilteredAcc - errAcc)));
 			float timestampStepUpper = prevAccTimestamp + ((baseline - (prevFilteredAcc + errAcc)) * (timestamp - prevAccTimestamp) / ((curFilteredAcc - errAcc) - (prevFilteredAcc + errAcc)));
@@ -450,7 +453,7 @@ measureActivityForeverMMA8451Q()
 			warpPrint("baselineAxis=%u\n, baseline=", baselineAxis);
 			floatPrint(baseline);
 			warpPrint("\n");
-			warpPrint("numMeasurements=%u\n", numMeasurements);
+			warpPrint("numMeasurements=%u,numSteps=%u\n", numMeasurements, numSteps);
 
 			// Reset baseline estimators.
 			xAccMax = -32768;
@@ -461,6 +464,7 @@ measureActivityForeverMMA8451Q()
 			zAccMin = 32767;
 
 			numMeasurements = 0;
+			numSteps = 0;
 		}
 
 		prevAccTimestamp = timestamp;
