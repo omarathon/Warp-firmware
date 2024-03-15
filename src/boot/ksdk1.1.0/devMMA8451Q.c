@@ -367,9 +367,10 @@ measureActivityForeverMMA8451Q()
 		yAccMin = min(yAcc, yAccMin);
 		zAccMin = min(zAcc, zAccMin);
 
-		// warpPrint("xAcc=%d", xAcc);
-		// warpPrint(",yAcc=%d", yAcc);
-		// warpPrint(",zAcc=%d\n", zAcc);
+		warpPrint("t=%u", timestamp);
+		warpPrint(",x=%d", xAcc);
+		warpPrint(",y=%d", yAcc);
+		warpPrint(",z=%d\n", zAcc);
 
 		int16_t curAcc = baselineAxis == 0 ? xAcc : (baselineAxis == 1 ? yAcc : zAcc);
 		float curFilteredAcc = (prevAccs[0] + prevAccs[1] + prevAccs[2] + curAcc) / 4.0f;
