@@ -437,46 +437,43 @@ measureActivityForeverMMA8451Q()
 			warpPrint("\n");
 			
 			// Use CDF to compute event probabilities.
-			// Try 3 different methods with variance error 2x in all.
-			// 1. with the mean variance error as 2x intervals, 2. as 3x, and 4. as 4x.
-			float pWalkNoMeanVar = PDF(timeBetweenStepsMean, timeBetweenStepsVar, 545 - 2 * (545 - 428), 545 + 2 * (545 - 428));
-			float pJogNoMeanVar = PDF(timeBetweenStepsMean, timeBetweenStepsVar, 400 - 2 * (400 - 372), 400 + 2 * (400 - 372));
-			float pRunNoMeanVar = PDF(timeBetweenStepsMean, timeBetweenStepsVar, 343 - 2 * (343 - 314), 343 + 2 * (343 - 314));
-			for (uint8_t method = 0; method < 4; method++) {
-				float pWalk;
-				float pJog;
-				float pRun;
-				switch (method) {
-					case 0:
-						pWalk = pWalkNoMeanVar;
-						pJog = pJogNoMeanVar;
-						pRun = pRunNoMeanVar;
-						break;
-					case 1:
-						pWalk = pWalkNoMeanVar * PDF(timeBetweenStepsMean, timeBetweenStepsVar, 545 - 2 * (545 - 428), 545 + 2 * (545 - 428));
-						pJog = pJogNoMeanVar * PDF(timeBetweenStepsMean, timeBetweenStepsVar, 400 - 2 * (400 - 372), 400 + 2 * (400 - 372));
-						pRun = pRunNoMeanVar * PDF(timeBetweenStepsMean, timeBetweenStepsVar, 343 - 2 * (343 - 314), 343 + 2 * (343 - 314));
-						break;
-					case 2:
-						pWalk = pWalkNoMeanVar * PDF(timeBetweenStepsMean, timeBetweenStepsMeanVar, 545 - 3 * (545 - 428), 545 + 3 * (545 - 428));
-						pJog = pJogNoMeanVar * PDF(timeBetweenStepsMean, timeBetweenStepsMeanVar, 400 - 3 * (400 - 372), 400 + 3 * (400 - 372));
-						pRun = pRunNoMeanVar * PDF(timeBetweenStepsMean, timeBetweenStepsMeanVar, 343 - 3 * (343 - 314), 343 + 3 * (343 - 314));
-						break;
-					default: // 3
-						pWalk = pWalkNoMeanVar * PDF(timeBetweenStepsMean, timeBetweenStepsMeanVar, 545 - 4 * (545 - 428), 545 + 4 * (545 - 428));
-						pJog = pJogNoMeanVar * PDF(timeBetweenStepsMean, timeBetweenStepsMeanVar, 400 - 4 * (400 - 372), 400 + 4 * (400 - 372));
-						pRun = pRunNoMeanVar * PDF(timeBetweenStepsMean, timeBetweenStepsMeanVar, 343 - 4 * (343 - 314), 343 + 4 * (343 - 314));
+			// Try 3 different methods with variance error 1x and 2x respectively.
+			// 1. with no mean variance error, 2. with 2x intervals, and 3. with 4x intervals.
+			for (uint8_t var_mult = 1; var_mult <= 2; var_mult++) {
+				float pWalkNoMeanVar = PDF(timeBetweenStepsMean, timeBetweenStepsVar, 545 - var_mult * (545 - 428), 545 + var_mult * (545 - 428));
+				float pJogNoMeanVar = PDF(timeBetweenStepsMean, timeBetweenStepsVar, 400 - var_mult * (400 - 372), 400 + var_mult * (400 - 372));
+				float pRunNoMeanVar = PDF(timeBetweenStepsMean, timeBetweenStepsVar, 343 - 2 * (343 - 314), 343 + 2 * (343 - 314));
+				for (uint8_t method = 0; method < 3; method++) {
+					float pWalk;
+					float pJog;
+					float pRun;
+					switch (method) {
+						case 0:
+							pWalk = pWalkNoMeanVar;
+							pJog = pJogNoMeanVar;
+							pRun = pRunNoMeanVar;
+							break;
+						case 1:
+							pWalk = pWalkNoMeanVar * PDF(timeBetweenStepsMean, timeBetweenStepsVar, 545 - 2 * (545 - 428), 545 + 2 * (545 - 428));
+							pJog = pJogNoMeanVar * PDF(timeBetweenStepsMean, timeBetweenStepsVar, 400 - 2 * (400 - 372), 400 + 2 * (400 - 372));
+							pRun = pRunNoMeanVar * PDF(timeBetweenStepsMean, timeBetweenStepsVar, 343 - 2 * (343 - 314), 343 + 2 * (343 - 314));
+							break;
+						default: // 2
+							pWalk = pWalkNoMeanVar * PDF(timeBetweenStepsMean, timeBetweenStepsMeanVar, 545 - 4 * (545 - 428), 545 + 4 * (545 - 428));
+							pJog = pJogNoMeanVar * PDF(timeBetweenStepsMean, timeBetweenStepsMeanVar, 400 - 4 * (400 - 372), 400 + 4 * (400 - 372));
+							pRun = pRunNoMeanVar * PDF(timeBetweenStepsMean, timeBetweenStepsMeanVar, 343 - 4 * (343 - 314), 343 + 4 * (343 - 314));
+					}
+					float pNone = 1 - pWalk - pJog - pRun;
+					warpPrint("method=%u: pWalk=", (var_mult * method));
+					floatPrint(pWalk);
+					warpPrint(",pJog=");
+					floatPrint(pJog);
+					warpPrint(",pRun=");
+					floatPrint(pRun);
+					warpPrint(",pNone=");
+					floatPrint(pNone);
+					warpPrint("\n");
 				}
-				float pNone = 1 - pWalk - pJog - pRun;
-				warpPrint("method=%u: pWalk=", method);
-				floatPrint(pWalk);
-				warpPrint(",pJog=");
-				floatPrint(pJog);
-				warpPrint(",pRun=");
-				floatPrint(pRun);
-				warpPrint(",pNone=");
-				floatPrint(pNone);
-				warpPrint("\n");
 			}
 
 			// Reset variables for the next window.
